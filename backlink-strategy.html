@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurews – Backlink Strategy & Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --ink: #0f0f0f;
+    --paper: #f5f2eb;
+    --accent: #c84b2f;
+    --accent2: #2563eb;
+    --muted: #6b6660;
+    --border: #d4cfc6;
+    --card: #fffdf8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  header span {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    font-weight: 300;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid var(--ink);
+    background: var(--paper);
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 0.9rem 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+
+  .tab:hover { color: var(--ink); }
+
+  .panel { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* PLATFORM LIST */
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .platform-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .platform-card:hover {
+    border-color: var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .platform-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .platform-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .priority-badge {
+    margin-left: auto;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .priority-high { background: #fef3c7; color: #92400e; }
+  .priority-mid  { background: #dbeafe; color: #1e40af; }
+  .priority-low  { background: #f3f4f6; color: #6b7280; }
+
+  .platform-topics {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .topic-tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+  }
+
+  .platform-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* TEMPLATES */
+  .template-block {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .template-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .template-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.72rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .copy-btn:hover { opacity: 0.85; }
+  .copy-btn.copied { background: #16a34a; }
+
+  .template-body {
+    padding: 1.25rem;
+    font-size: 0.85rem;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    color: var(--ink);
+    font-family: 'DM Mono', 'Courier New', monospace;
+  }
+
+  .template-note {
+    padding: 0.75rem 1.25rem;
+    background: #fef9f0;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* TRACKER */
+  .tracker-controls {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tracker-controls input,
+  .tracker-controls select {
+    padding: 0.55rem 0.85rem;
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    background: white;
+    color: var(--ink);
+  }
+
+  .tracker-controls input:focus,
+  .tracker-controls select:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+
+  .add-btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.55rem 1.25rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .add-btn:hover { opacity: 0.8; }
+
+  .tracker-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-box {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  thead { background: var(--ink); color: var(--paper); }
+  thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fef9f0; }
+  tbody td { padding: 0.7rem 1rem; vertical-align: middle; }
+
+  .status-pill {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .status-live    { background: #dcfce7; color: #166534; }
+  .status-pending { background: #fef9c3; color: #854d0e; }
+  .status-draft   { background: #f3f4f6; color: #6b7280; }
+
+  .del-btn {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 0.25rem;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  .del-btn:hover { opacity: 1; }
+
+  .empty-row td {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .export-btn {
+    background: none;
+    border: 1.5px solid var(--border);
+    padding: 0.5rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+  .export-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  @media (max-width: 600px) {
+    .tracker-stats { grid-template-columns: repeat(2, 1fr); }
+    .platform-grid { grid-template-columns: 1fr; }
+    .panel { padding: 1rem; }
+    .tracker-controls { flex-direction: column; }
+    .tracker-controls input,
+    .tracker-controls select,
+    .add-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AUREWS · Backlink Strategy</h1>
+  <span>SEO IE204 — Nhóm 3</span>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('platforms')">Platforms</button>
+  <button class="tab" onclick="switchTab('templates')">Post Templates</button>
+  <button class="tab" onclick="switchTab('tracker')">Tracker</button>
+</div>
+
+<!-- TAB 1: PLATFORMS -->
+<div class="panel active" id="tab-platforms">
+  <p class="section-title">Nền tảng để xây dựng backlink — sắp xếp theo ưu tiên</p>
+  <div class="platform-grid" id="platform-grid"></div>
+</div>
+
+<!-- TAB 2: TEMPLATES -->
+<div class="panel" id="tab-templates">
+  <p class="section-title">Bài đăng mẫu — copy & điều chỉnh theo bài viết thực tế</p>
+  <div id="templates-container"></div>
+</div>
+
+<!-- TAB 3: TRACKER -->
+<div class="panel" id="tab-tracker">
+  <p class="section-title">Theo dõi backlink đã tạo</p>
+
+  <div class="tracker-stats">
+    <div class="stat-box">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Total Links</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-live" style="color:#16a34a">0</div>
+      <div class="stat-label">Live</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-pending" style="color:#ca8a04">0</div>
+      <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="stat-platforms">0</div>
+      <div class="stat-label">Platforms</div>
+    </div>
+  </div>
+
+  <div class="tracker-controls">
+    <input type="date" id="in-date" />
+    <select id="in-platform">
+      <option value="">Platform...</option>
+      <option>Reddit</option>
+      <option>Medium</option>
+      <option>Quora</option>
+      <option>Facebook Group</option>
+      <option>Hashnode</option>
+      <option>Hacker News</option>
+      <option>Voz</option>
+      <option>Other</option>
+    </select>
+    <input type="text" id="in-url" placeholder="URL đã đăng..." style="flex:1; min-width:160px" />
+    <input type="text" id="in-article" placeholder="Bài Aurews được link..." style="flex:1; min-width:160px" />
+    <input type="text" id="in-author" placeholder="Người đăng..." style="width:110px" />
+    <select id="in-status">
+      <option value="pending">Pending</option>
+      <option value="live">Live</option>
+      <option value="draft">Draft</option>
+    </select>
+    <button class="add-btn" onclick="addEntry()">+ Add</button>
+    <button class="export-btn" onclick="exportCSV()">↓ CSV</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Platform</th>
+        <th>URL Posted</th>
+        <th>Aurews Article</th>
+        <th>By</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tracker-body">
+      <tr class="empty-row"><td colspan="7">Chưa có backlink nào — thêm vào ở trên 👆</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+const platforms = [
+  {
+    name: "Reddit",
+    icon: "R",
+    iconBg: "#ff4500",
+    iconColor: "#fff",
+    priority: "high",
+    topics: ["Business", "AI", "Politics"],
+    note: "Đăng trong r/businessnews, r/artificial, r/worldnews, r/geopolitics. Tỉ lệ comment:link = 9:1, không spam.",
+    url: "https://reddit.com"
+  },
+  {
+    name: "Medium",
+    icon: "M",
+    iconBg: "#000",
+    iconColor: "#fff",
+    priority: "high",
+    topics: ["AI", "Business", "Tech"],
+    note: "Cross-post bài viết, thêm canonical về Aurews. Submit vào The Startup hoặc Towards Data Science.",
+    url: "https://medium.com"
+  },
+  {
+    name: "Quora",
+    icon: "Q",
+    iconBg: "#a82400",
+    iconColor: "#fff",
+    priority: "mid",
+    topics: ["AI", "Business", "Politics"],
+    note: "Tìm câu hỏi liên quan, viết trả lời ~200 từ, link về bài Aurews ở cuối.",
+    url: "https://quora.com"
+  },
+  {
+    name: "Hacker News",
+    icon: "Y",
+    iconBg: "#ff6600",
+    iconColor: "#fff",
+    priority: "mid",
+    topics: ["AI", "Tech", "Business"],
+    note: "Chỉ đăng bài phân tích sâu về AI/Tech. Cộng đồng khắt khe, tiêu đề không clickbait.",
+    url: "https://news.ycombinator.com"
+  },
+  {
+    name: "Facebook Groups",
+    icon: "f",
+    iconBg: "#1877f2",
+    iconColor: "#fff",
+    priority: "mid",
+    topics: ["Business", "AI", "General"],
+    note: "Tìm nhóm 'International Business News', 'AI & ML News'. Đăng kèm câu hỏi để tăng tương tác.",
+    url: "https://facebook.com"
+  },
+  {
+    name: "Hashnode",
+    icon: "H",
+    iconBg: "#2563eb",
+    iconColor: "#fff",
+    priority: "low",
+    topics: ["AI", "Tech"],
+    note: "Tạo blog, cross-post, set canonical về Aurews. Tag #ai #technology.",
+    url: "https://hashnode.com"
+  },
+  {
+    name: "Voz",
+    icon: "V",
+    iconBg: "#e63946",
+    iconColor: "#fff",
+    priority: "low",
+    topics: ["Tech", "General"],
+    note: "Box Công nghệ hoặc Tin tức. Tóm tắt bài sang tiếng Việt, link gốc ở cuối.",
+    url: "https://voz.vn"
+  },
+];
+
+const templates = [
+  {
+    platform: "Reddit – Business/Economics",
+    color: "#ff4500",
+    body: `Tiêu đề: The global trade landscape is shifting fast – here's what's actually happening
+
+---
+
+Been following international business news closely lately and noticed a few patterns that most outlets aren't connecting the dots on.
+
+[2–3 câu tóm tắt insight chính từ bài viết trên Aurews]
+
+Full breakdown here if anyone wants to dig deeper: [LINK BÀI AUREWS]
+
+Curious what others think – is this a temporary shift or a structural change?`,
+    note: "Đăng trong: r/businessnews, r/economics. Không đăng cùng 1 link trên 2 subreddit trong 1 ngày."
+  },
+  {
+    platform: "Reddit – AI/Technology",
+    color: "#ff4500",
+    body: `Tiêu đề: [Discussion] The pace of AI development in 2025 is making last year's predictions look conservative
+
+---
+
+I've been keeping up with AI news and the velocity of change is genuinely hard to track.
+
+[2–3 câu tóm tắt nội dung bài AI trên Aurews]
+
+Found this breakdown that puts it in context well: [LINK BÀI AUREWS]
+
+What do you think is the most underreported AI story right now?`,
+    note: "Đăng trong: r/artificial, r/Futurology, r/MachineLearning"
+  },
+  {
+    platform: "Reddit – Politics",
+    color: "#ff4500",
+    body: `Tiêu đề: [Analysis] Why [TÊN SỰ KIỆN] matters more than the headlines suggest
+
+---
+
+Most coverage focuses on the surface level, but there are a few layers worth unpacking here.
+
+[2–3 câu phân tích ngắn từ bài viết]
+
+More context here: [LINK BÀI AUREWS]
+
+Would love to hear perspectives from people closer to the region.`,
+    note: "Đăng trong: r/worldnews, r/geopolitics, r/politics"
+  },
+  {
+    platform: "Medium – Cross-post",
+    color: "#000000",
+    body: `[TIÊU ĐỀ HẤP DẪN HƠN BÀI GỐC]
+
+[Intro ~80 từ: đặt vấn đề, hook người đọc, KHÔNG copy paste từ bài gốc]
+
+[Body: Viết lại nội dung chính bằng văn phong Medium, thêm góc nhìn, dẫn chứng]
+
+[Conclusion: tóm tắt + câu hỏi mở cho người đọc comment]
+
+---
+This article was originally published on Aurews (https://aurews.com),
+an international news platform covering business, AI, politics, and more.`,
+    note: "⚠️ Set canonical URL về bài gốc trên Aurews trong phần Settings của Medium để tránh duplicate content."
+  },
+  {
+    platform: "Quora – Câu trả lời",
+    color: "#a82400",
+    body: `Tìm câu hỏi liên quan trên Quora, ví dụ:
+"What are the most important AI developments to watch in 2025?"
+
+---
+
+There are several developments worth tracking closely this year:
+
+1. [Điểm chính 1 từ bài Aurews]
+   [2 câu giải thích]
+
+2. [Điểm chính 2]
+   [2 câu giải thích]
+
+3. [Điểm chính 3]
+   [2 câu giải thích]
+
+For a more comprehensive breakdown, this piece covers it well: [LINK BÀI AUREWS]
+
+Happy to discuss any of these points further.`,
+    note: "Viết câu trả lời dài ít nhất 150 từ trước khi thêm link — quá ngắn sẽ bị Quora ẩn."
+  },
+  {
+    platform: "Facebook Group",
+    color: "#1877f2",
+    body: `🌍 [TÊN SỰ KIỆN / CHỦ ĐỀ]
+
+[1–2 câu tóm tắt tin tức, ngắn gọn, dễ đọc trên mobile]
+
+👉 Full story: [LINK BÀI AUREWS]
+
+What's your take on this?`,
+    note: "Tìm nhóm: 'International Business News', 'AI & Machine Learning News', 'World Politics Discussion'"
+  },
+];
+
+// Render platforms
+function renderPlatforms() {
+  const grid = document.getElementById('platform-grid');
+  grid.innerHTML = platforms.map(p => `
+    <div class="platform-card">
+      <div class="platform-header">
+        <div class="platform-icon" style="background:${p.iconBg};color:${p.iconColor}">${p.icon}</div>
+        <span class="platform-name">${p.name}</span>
+        <span class="priority-badge priority-${p.priority}">${p.priority}</span>
+      </div>
+      <div class="platform-topics">
+        ${p.topics.map(t => `<span class="topic-tag">${t}</span>`).join('')}
+      </div>
+      <p class="platform-note">${p.note}</p>
+    </div>
+  `).join('');
+}
+
+// Render templates
+function renderTemplates() {
+  const c = document.getElementById('templates-container');
+  c.innerHTML = templates.map((t, i) => `
+    <div class="template-block">
+      <div class="template-header" style="background:${t.color}">
+        <h3>${t.platform}</h3>
+        <button class="copy-btn" onclick="copyTemplate(${i}, this)">Copy</button>
+      </div>
+      <div class="template-body" id="tmpl-${i}">${t.body}</div>
+      <div class="template-note">💡 ${t.note}</div>
+    </div>
+  `).join('');
+}
+
+function copyTemplate(i, btn) {
+  const text = document.getElementById(`tmpl-${i}`).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Tracker
+let entries = JSON.parse(localStorage.getItem('aurews-backlinks') || '[]');
+
+function save() { localStorage.setItem('aurews-backlinks', JSON.stringify(entries)); }
+
+function renderTracker() {
+  const tbody = document.getElementById('tracker-body');
+  if (entries.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Chưa có backlink nào — thêm vào ở trên 👆</td></tr>';
+  } else {
+    tbody.innerHTML = entries.map((e, i) => `
+      <tr>
+        <td>${e.date}</td>
+        <td>${e.platform}</td>
+        <td>${e.url ? `<a href="${e.url}" target="_blank" style="color:var(--accent2);word-break:break-all">${e.url.slice(0,40)}${e.url.length>40?'…':''}</a>` : '—'}</td>
+        <td>${e.article || '—'}</td>
+        <td>${e.author || '—'}</td>
+        <td><span class="status-pill status-${e.status}">${e.status}</span></td>
+        <td><button class="del-btn" onclick="delEntry(${i})">✕</button></td>
+      </tr>
+    `).join('');
+  }
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = entries.length;
+  document.getElementById('stat-live').textContent = entries.filter(e => e.status === 'live').length;
+  document.getElementById('stat-pending').textContent = entries.filter(e => e.status === 'pending').length;
+  const platforms = new Set(entries.map(e => e.platform));
+  document.getElementById('stat-platforms').textContent = platforms.size;
+}
+
+function addEntry() {
+  const date     = document.getElementById('in-date').value;
+  const platform = document.getElementById('in-platform').value;
+  const url      = document.getElementById('in-url').value.trim();
+  const article  = document.getElementById('in-article').value.trim();
+  const author   = document.getElementById('in-author').value.trim();
+  const status   = document.getElementById('in-status').value;
+  if (!platform) { alert('Chọn platform trước nhé!'); return; }
+  entries.unshift({ date: date || new Date().toISOString().slice(0,10), platform, url, article, author, status });
+  save();
+  renderTracker();
+  document.getElementById('in-url').value = '';
+  document.getElementById('in-article').value = '';
+  document.getElementById('in-author').value = '';
+}
+
+function delEntry(i) {
+  if (confirm('Xoá entry này?')) {
+    entries.splice(i, 1);
+    save();
+    renderTracker();
+  }
+}
+
+function exportCSV() {
+  const header = 'Date,Platform,URL,Article,Author,Status\n';
+  const rows = entries.map(e => `${e.date},${e.platform},"${e.url}","${e.article}","${e.author}",${e.status}`).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aurews-backlinks.csv';
+  a.click();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+renderPlatforms();
+renderTemplates();
+renderTracker();
+</script>
+</body>
+</html>
